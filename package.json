@@ -1,11 +1,27 @@
 {
   "name": "sss-utility",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Utility Lib for Super Scaled Sockets",
-  "main": "index.js",
+  "main": "dist/main.js",
+  "browser": "dist/browser.js",
+  "module": "dist/module.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c"
   },
-  "author": "",
-  "license": "none"
+  "author": "Jazz Brown",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-eslint": "^10.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-babel-minify": "^9.0.0",
+    "rollup-plugin-cleanup": "^3.1.1"
+  },
+  "dependencies": {}
 }
