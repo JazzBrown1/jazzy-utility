@@ -1,7 +1,11 @@
 {
   "name": "jazzy-utility",
-  "version": "1.0.0-beta",
+  "version": "0.1.0",
   "description": "Utility Lib for Super Scaled Sockets",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JazzBrown1/jazzy-utility.git"
+  },
   "main": "dist/main.js",
   "module": "dist/module.js",
   "scripts": {
