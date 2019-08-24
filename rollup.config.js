@@ -5,27 +5,37 @@ import cleanup from 'rollup-plugin-cleanup';
 
 export default [
   {
-    input: 'src/index.js',
+    input: 'src/index-cjs.js',
+    plugins: [
+      babel({
+        exclude: 'node_modules/**'
+      }),
+    ],
     output: [
       {
         file: './dist/main.js',
         format: 'umd',
-        name: 'sss-utility',
+        name: 'jazzy-utility'
       }
     ]
   },
   {
     input: 'src/index.js',
+    plugins: [
+      babel({
+        exclude: 'node_modules/**'
+      })
+    ],
     output: [
       {
         file: './dist/module.js',
         format: 'esm',
-        name: 'sss-utility',
+        name: 'jazzy-utility',
       }
     ]
   },
   {
-    input: 'src/index.js',
+    input: 'src/index-cjs.js',
     plugins: [
       babel({
         exclude: 'node_modules/**'
@@ -39,8 +49,8 @@ export default [
     ],
     output: [
       {
-        file: './dist/browser.js',
-        name: 'sss-utility',
+        file: './dist/jazzy-utility-min.js',
+        name: 'jazzy-utility',
         format: 'umd'
       }
     ]
