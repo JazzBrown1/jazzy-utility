@@ -28,13 +28,13 @@ import {Stash} from 'jazzy-utility';
 ### class Stash()
 
 Methods:
--put(any value) => int id
--see(int id) => any value
--take(int id) => any value
--replace(int id, any value) => void
--size() => int size
--isEmpty() => boolean result
--clear() => void
+<br/>put(*any* value) => *int* id
+<br/>see(*int* id) => any value
+<br/>take(*int* id) => any value
+<br/>replace(*int* id, any value) => *void*
+<br/>size() => *int* size
+<br/>isEmpty() => *boolean* result
+<br/>clear() => *void*
 
 Usage:
 ~~~
@@ -48,7 +48,7 @@ console.log(myStash.isEmpty()); // output true
 
 ## jazzy-utility.asyncForEach
 
-### function asyncForEach(array array, function forEachFunction, function thenFunction) => void
+### *function* asyncForEach(*array* array, *function* forEachFunction, *function* thenFunction) => *void*
 
 Usage:
 ~~~
@@ -65,7 +65,7 @@ asyncForEach(actions, (action, index, next) => {
 
 ## jazzy-utility.asyncDoAll
 
-### function asyncDoAll(array array, function forEachFunction, function thenFunction) => void
+### *function* asyncDoAll(*array* array, *function* forEachFunction, *function* thenFunction) => *void*
 
 Usage:
 ~~~
@@ -85,7 +85,7 @@ asyncDoAll(messages, (message, index, done) => {
 
 ## jazzy-utility.arrayDelete
 
-### function arrayDelete(array array, any value) => boolean result
+### *function* arrayDelete(*array* array, *any* value) => *boolean* result
 
 Usage:
 ~~~
