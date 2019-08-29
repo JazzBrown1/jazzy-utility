@@ -1,16 +1,16 @@
-### Jazzy Utility
+# Jazzy Utility
 
-A small Utility Library for use with... Well anything really.
+A small utility library for use with... Well anything really.
 
 ## Installation
 
-# Installing
+### Installing
 
 ~~~
 npm install 'jazzy-utility'
 ~~~
 
-# Importing
+### Importing
 
 Cjs
 ~~~
@@ -25,16 +25,16 @@ import {Stash} from 'jazzy-utility';
 
 ## jazzy-utility.Stash
 
-# class Stash()
+### class Stash()
 
-methods:
-put(any value) => int id
-see(int id) => any value
-take(int id) => any value
-replace(int id, any value) => void
-size() => int size
-isEmpty() => boolean result
-clear() => void
+Methods:
+-put(any value) => int id
+-see(int id) => any value
+-take(int id) => any value
+-replace(int id, any value) => void
+-size() => int size
+-isEmpty() => boolean result
+-clear() => void
 
 Usage:
 ~~~
@@ -48,7 +48,7 @@ console.log(myStash.isEmpty()); // output true
 
 ## jazzy-utility.asyncForEach
 
-# function asyncForEach(array array, function forEachFunction, function thenFunction) => void
+### function asyncForEach(array array, function forEachFunction, function thenFunction) => void
 
 Usage:
 ~~~
@@ -56,7 +56,7 @@ const actions = ['SaveLogs', 'CheckErrors', 'cleanUpData'];
 asyncForEach(actions, (action, index, next) => {
   performAction(action, (result) => {
     if (result) next();
-    else console.log('Failed at action ' + action + ' and aborted); // Will not continue if next is not called
+    else console.log('Failed at action ' + action + ' and aborted'); // Will not continue if next is not called
   });
 }, () => {
   console.log('Job Complete');
@@ -65,26 +65,17 @@ asyncForEach(actions, (action, index, next) => {
 
 ## jazzy-utility.asyncDoAll
 
-# function asyncDoAll(array array, function forEachFunction, function thenFunction) => void
+### function asyncDoAll(array array, function forEachFunction, function thenFunction) => void
 
 Usage:
 ~~~
-const myArr = [
-  {
-    to: 'user1',
-    message: 'hello user1'
-  },
-  {
-    to: 'user2',
-    message: 'hello user2'
-  },
-  {
-    to: 'user3',
-    message: 'hello user3'
-  }  
+const messages = [
+  {to: 'user1', text: 'hello user1'},
+  {to: 'user2', text: 'hello user2'},
+  {to: 'user3', text: 'hello user3'}  
 ];
-asyncDoAll(myArr, (item, index, done) => {
-  sendMessage(item.to, item.message, () => {
+asyncDoAll(messages, (message, index, done) => {
+  sendMessage(message.to, message.text, () => {
     done();
   });
 }, () => {
@@ -94,7 +85,7 @@ asyncDoAll(myArr, (item, index, done) => {
 
 ## jazzy-utility.arrayDelete
 
-# function arrayDelete(array array, any value) => boolean result
+### function arrayDelete(array array, any value) => boolean result
 
 Usage:
 ~~~
