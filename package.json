@@ -1,7 +1,7 @@
 {
   "name": "jazzy-utility",
   "version": "0.1.2",
-  "description": "Utility Lib for Super Scaled Sockets",
+  "description": "Utility Library",
   "repository": {
     "type": "git",
     "url": "https://github.com/JazzBrown1/jazzy-utility.git"

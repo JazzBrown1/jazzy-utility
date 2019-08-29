@@ -28,10 +28,13 @@ const Stash = function Stash() {
     });
   };
   this.isEmpty = function isEmpty() {
-    return Object.keys(this._stash).length === 0 && this._stash.constructor === Object;
+    return Object.keys(this._stash).length === 0;
   };
   this.replace = function replace(id, val) {
     this._stash[id] = val;
+  };
+  this.size = function size() {
+    return Object.keys(this._stash).length;
   };
 };
 
