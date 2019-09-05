@@ -37,7 +37,7 @@
   };
 
   var arrayDelete = function arrayDelete(arr, item) {
-    if (!arr.isArray()) return false;
+    if (!Array.isArray(arr)) return false;
 
     var _index = arr.findIndex(function (_item) {
       return item === _item;
@@ -45,10 +45,10 @@
 
     if (_index !== -1) {
       arr.splice(_index, 1);
-      return true;
+      return _index;
     }
 
-    return false;
+    return -1;
   };
 
   /**
