@@ -9,7 +9,8 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "test": "nyc mocha"
   },
   "author": "Jazz Brown",
   "license": "MIT",
@@ -20,9 +21,13 @@
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
+    "nyc": "^14.1.1",
+    "rollup": "^1.20.1",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-babel-minify": "^9.0.0",
-    "rollup-plugin-cleanup": "^3.1.1",
-    "rollup": "^1.20.1"
+    "rollup-plugin-cleanup": "^3.1.1"
+  },
+  "dependencies": {
+    "mocha": "^6.2.0"
   }
 }

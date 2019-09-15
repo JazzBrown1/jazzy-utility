@@ -14,7 +14,7 @@ export default [
     output: [
       {
         file: './dist/main.js',
-        format: 'umd',
+        format: 'cjs',
         name: 'jazzy-utility'
       }
     ]
