@@ -1,5 +1,10 @@
 # Jazzy Utility
 
+[![Build Status](https://travis-ci.org/JazzBrown1/jazzy-utility.svg?branch=master)](https://travis-ci.org/JazzBrown1/jazzy-utility)
+[![Coverage Status](https://coveralls.io/repos/github/JazzBrown1/jazzy-utility/badge.svg)](https://coveralls.io/github/JazzBrown1/jazzy-utility)
+[![Dependencies](https://img.shields.io/david/jazzbrown1/jazzy-utility)](https://npmjs.org/package/jazzy-utility)
+[![Version](https://img.shields.io/npm/v/jazzy-utility)](https://npmjs.org/package/jazzy-utility)
+
 A small utility library for use with... Well anything really.
 
 ## Installation
