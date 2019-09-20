@@ -4,26 +4,29 @@
  * @param {callback} callback
  * @param {callback} finished
  */
-var asyncForEach = function asyncForEach(arr, callback, finished) {
+var forEachCallbacks = function forEachCallbacks(arr, callback, finished) {
+  if (!Array.isArray(arr)) throw new TypeError();
   var index = 0;
 
   var next = function next() {
-    if (index < arr.length) callback(arr[index], index++, next);else finished();
+    if (index < arr.length) callback(arr[index], index++, next);else if (finished) finished();
   };
 
   next();
 };
 
-var asyncDoAll = function asyncDoAll(arr, callback, finished) {
+var doAll = function doAll(arr, callback, finished) {
+  if (!Array.isArray(arr)) throw new TypeError();
+
   if (arr.length === 0) {
-    finished();
+    if (finished) finished();
     return;
   }
 
   var counter = 0;
 
   var done = function done() {
-    if (++counter === arr.length) finished();
+    if (++counter === arr.length && finished) finished();
   };
 
   arr.forEach(function (el, index) {
@@ -95,12 +98,28 @@ var Stash = function Stash() {
   };
 };
 
+var randomInt = (function (min, max) {
+  var _min = Math.ceil(min);
+
+  var _max = Math.floor(max);
+
+  return Math.floor(Math.random() * (_max - _min)) + _min;
+});
+
+var randomEl = (function (arr) {
+  if (!Array.isArray(arr)) throw new TypeError("randomEl input must be of type Array");
+  if (arr.length === 0) throw new Error("randomEl cannot accept an empty array");
+  return arr[randomInt(0, arr.length - 1)];
+});
+
 var index = {
-  asyncForEach: asyncForEach,
-  asyncDoAll: asyncDoAll,
+  forEachCallbacks: forEachCallbacks,
+  doAll: doAll,
   arrayDelete: arrayDelete,
-  Stash: Stash
+  Stash: Stash,
+  randomEl: randomEl,
+  randomInt: randomInt
 };
 
 export default index;
-export { Stash, arrayDelete, asyncDoAll, asyncForEach };
+export { Stash, arrayDelete, doAll, forEachCallbacks, randomEl, randomInt };
