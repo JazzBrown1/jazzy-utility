@@ -34,9 +34,9 @@ import {Stash} from 'jazzy-utility';
 
 Methods:
 <br/>put(*any* value) => *int* id
-<br/>see(*int* id) => any value
-<br/>take(*int* id) => any value
-<br/>replace(*int* id, any value) => *void*
+<br/>see(*int* id) => *any* value
+<br/>take(*int* id) => *any* value
+<br/>replace(*int* id, *any* value) => *void*
 <br/>size() => *int* size
 <br/>isEmpty() => *boolean* result
 <br/>clear() => *void*
@@ -51,14 +51,14 @@ myStash.take(myId);
 console.log(myStash.isEmpty()); // output true
 ~~~
 
-## jazzy-utility.asyncForEach
+## jazzy-utility.forEachCallbacks
 
-### *function* asyncForEach(*array* array, *function* forEachFunction, *function* thenFunction) => *void*
+### *function* forEachCallbacks(*array* array, *function* forEachFunction, *function* thenFunction) => *void*
 
 Usage:
 ~~~
 const actions = ['SaveLogs', 'CheckErrors', 'cleanUpData'];
-asyncForEach(actions, (action, index, next) => {
+forEachCallbacks(actions, (action, index, next) => {
   performAction(action, (result) => {
     if (result) next();
     else console.log('Failed at action ' + action + ' and aborted'); // Will not continue if next is not called
@@ -68,9 +68,9 @@ asyncForEach(actions, (action, index, next) => {
 });
 ~~~
 
-## jazzy-utility.asyncDoAll
+## jazzy-utility.doAll
 
-### *function* asyncDoAll(*array* array, *function* forEachFunction, *function* thenFunction) => *void*
+### *function* doAll(*array* array, *function* forEachFunction, *function* thenFunction) => *void*
 
 Usage:
 ~~~
@@ -79,7 +79,7 @@ const messages = [
   {to: 'user2', text: 'hello user2'},
   {to: 'user3', text: 'hello user3'}  
 ];
-asyncDoAll(messages, (message, index, done) => {
+doAll(messages, (message, index, done) => {
   sendMessage(message.to, message.text, () => {
     done();
   });
