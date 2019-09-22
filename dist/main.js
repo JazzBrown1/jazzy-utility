@@ -114,11 +114,116 @@ var randomEl = (function (arr) {
   return arr[randomInt(0, arr.length - 1)];
 });
 
+var noop = function noop() {};
+
+var parseTask = function parseTask(task) {
+  return typeof task.action !== 'function';
+};
+
+var parseTasks = function parseTasks(tasks) {
+  var errors = [];
+  tasks.forEach(function (task, i) {
+    if (parseTask(task)) errors.push(i);
+  });
+  return errors.length === 0 ? false : errors;
+};
+
+function Workflow(tasks) {
+  if (tasks && parseTasks(tasks)) {
+    throw SyntaxError('Task in incorrect syntax', parseTasks(tasks));
+  }
+
+  this._tasks = tasks || [];
+  this._actions = tasks ? tasks.map(function (e) {
+    return e.action;
+  }) : [];
+
+  this.run = function run(data, _finished) {
+    var _this = this;
+
+    var finished = _finished || noop;
+    var index = 0;
+    var control = {};
+
+    control.next = function (data2) {
+      if (index < _this._actions.length) {
+        _this._actions[index++](data2, control, index);
+      } else if (index === _this._actions.length) {
+        index++;
+        finished(data2);
+      }
+    };
+
+    control.exit = function (data2) {
+      if (index < _this._actions.length) {
+        index = _this._actions.length;
+        control.next(data2);
+      }
+    };
+
+    control.abort = function () {
+      index = _this._actions.length + 1;
+    };
+
+    control.next(data);
+  };
+
+  this._insertAtIndex = function _insertAtIndex(index, task) {
+    this._tasks.splice(index, 0, task);
+
+    this._actions.splice(index, 0, task.action);
+  };
+
+  this.add = function add(task) {
+    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
+
+    this._tasks.push(task);
+
+    this._actions.push(task.action);
+  };
+
+  this.insertBefore = function insertBefore(findFunc, task) {
+    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
+
+    var _index = this._tasks.findIndex(findFunc);
+
+    if (_index !== -1) this._insertAtIndex(_index, task);
+    return _index;
+  };
+
+  this.insertAfter = function insertAfter(findFunc, task) {
+    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
+
+    var _index = this._tasks.findIndex(findFunc);
+
+    if (_index !== -1) {
+      this._insertAtIndex(_index + 1, task);
+
+      return _index + 1;
+    }
+
+    return -1;
+  };
+
+  this.findAndDelete = function findAndDelete(findFunc) {
+    var _index = this._tasks.findIndex(findFunc);
+
+    if (_index !== -1) {
+      this._actions.splice(_index, 1);
+
+      this._tasks.splice(_index, 1);
+    }
+
+    return _index;
+  };
+}
+
 module.exports = {
   forEachCallbacks: forEachCallbacks,
   doAll: doAll,
   arrayDelete: arrayDelete,
   Stash: Stash,
   randomEl: randomEl,
-  randomInt: randomInt
+  randomInt: randomInt,
+  Workflow: Workflow
 };
