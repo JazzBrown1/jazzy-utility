@@ -116,27 +116,43 @@ var randomEl = (function (arr) {
 
 var noop = function noop() {};
 
+var makeNestedFlow = function makeNestedFlow(flow) {
+  return function (data, control) {
+    flow.run(data, control.next);
+  };
+};
+
 var parseTask = function parseTask(task) {
-  return typeof task.action !== 'function';
+  if (typeof task === 'function') {
+    return task;
+  }
+
+  if (task && typeof task.action === 'function') {
+    return task.action;
+  }
+
+  if (task && task.action && typeof task.action.run === 'function') {
+    return makeNestedFlow(task.action);
+  }
+
+  if (task && typeof task.run === 'function') {
+    return makeNestedFlow(task);
+  }
+
+  throw SyntaxError('Task in incorrect syntax', task);
 };
 
 var parseTasks = function parseTasks(tasks) {
-  var errors = [];
-  tasks.forEach(function (task, i) {
-    if (parseTask(task)) errors.push(i);
+  var actions = [];
+  tasks.forEach(function (task) {
+    actions.push(parseTask(task));
   });
-  return errors.length === 0 ? false : errors;
+  return actions;
 };
 
 function Workflow(tasks) {
-  if (tasks && parseTasks(tasks)) {
-    throw SyntaxError('Task in incorrect syntax', parseTasks(tasks));
-  }
-
   this._tasks = tasks || [];
-  this._actions = tasks ? tasks.map(function (e) {
-    return e.action;
-  }) : [];
+  this._actions = tasks ? parseTasks(tasks) : [];
 
   this.run = function run(data, _finished) {
     var _this = this;
@@ -169,22 +185,22 @@ function Workflow(tasks) {
   };
 
   this._insertAtIndex = function _insertAtIndex(index, task) {
+    var action = parseTask(task);
+
     this._tasks.splice(index, 0, task);
 
-    this._actions.splice(index, 0, task.action);
+    this._actions.splice(index, 0, action);
   };
 
   this.add = function add(task) {
-    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
+    var action = parseTask(task);
+
+    this._actions.push(action);
 
     this._tasks.push(task);
-
-    this._actions.push(task.action);
   };
 
   this.insertBefore = function insertBefore(findFunc, task) {
-    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
-
     var _index = this._tasks.findIndex(findFunc);
 
     if (_index !== -1) this._insertAtIndex(_index, task);
@@ -192,8 +208,6 @@ function Workflow(tasks) {
   };
 
   this.insertAfter = function insertAfter(findFunc, task) {
-    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
-
     var _index = this._tasks.findIndex(findFunc);
 
     if (_index !== -1) {

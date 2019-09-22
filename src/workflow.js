@@ -1,20 +1,34 @@
 const noop = () => {};
+const makeNestedFlow = (flow) => (data, control) => {
+  flow.run(data, control.next);
+};
 
-const parseTask = (task) => typeof task.action !== 'function';
+const parseTask = (task) => {
+  if (typeof task === 'function') {
+    return task;
+  }
+  if (task && typeof task.action === 'function') {
+    return task.action;
+  }
+  if (task && task.action && typeof task.action.run === 'function') {
+    return makeNestedFlow(task.action);
+  }
+  if (task && typeof task.run === 'function') {
+    return makeNestedFlow(task);
+  }
+  throw SyntaxError('Task in incorrect syntax', task);
+};
 const parseTasks = (tasks) => {
-  const errors = [];
-  tasks.forEach((task, i) => {
-    if (parseTask(task)) errors.push(i);
+  const actions = [];
+  tasks.forEach((task) => {
+    actions.push(parseTask(task));
   });
-  return errors.length === 0 ? false : errors;
+  return actions;
 };
 
 export default function Workflow(tasks) {
-  if (tasks && parseTasks(tasks)) {
-    throw SyntaxError('Task in incorrect syntax', parseTasks(tasks));
-  }
   this._tasks = tasks || [];
-  this._actions = tasks ? tasks.map((e) => e.action) : [];
+  this._actions = tasks ? parseTasks(tasks) : [];
 
   this.run = function run(data, _finished) {
     const finished = _finished || noop;
@@ -41,25 +55,24 @@ export default function Workflow(tasks) {
   };
 
   this._insertAtIndex = function _insertAtIndex(index, task) {
+    const action = parseTask(task);
     this._tasks.splice(index, 0, task);
-    this._actions.splice(index, 0, task.action);
+    this._actions.splice(index, 0, action);
   };
 
   this.add = function add(task) {
-    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
+    const action = parseTask(task);
+    this._actions.push(action);
     this._tasks.push(task);
-    this._actions.push(task.action);
   };
 
   this.insertBefore = function insertBefore(findFunc, task) {
-    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
     const _index = this._tasks.findIndex(findFunc);
     if (_index !== -1) this._insertAtIndex(_index, task);
     return _index;
   };
 
   this.insertAfter = function insertAfter(findFunc, task) {
-    if (parseTask(task)) throw SyntaxError('Task in incorrect format');
     const _index = this._tasks.findIndex(findFunc);
     if (_index !== -1) {
       this._insertAtIndex(_index + 1, task);
