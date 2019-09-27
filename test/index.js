@@ -5,21 +5,27 @@
 
 var assert = require('assert');
 var {
-  doAll, forEachCallbacks, arrayDelete, Stash, randomEl, randomInt
+  doAll,
+  forEachCallbacks,
+  arrayDelete,
+  Stash,
+  randomEl,
+  randomInt
 } = require('../dist/main');
+require('./workflow');
 
-describe('#randomInt()', function () {
+describe('randomInt()', function () {
   it('return a number in the range', function (done) {
     var from = 1;
     var to = 5;
     var result = randomInt(from, to);
-    done(assert.equal((result >= from && result <= to), true));
+    done(assert.equal(result >= from && result <= to, true));
   });
 });
 
-describe('#randomEl()', function () {
+describe('randomEl()', function () {
   it('return a random element from the array', function (done) {
-    var array = [1,2,3,4,5];
+    var array = [1, 2, 3, 4, 5];
     var result = randomEl(array);
     done(assert.equal(array.includes(result), true));
   });
@@ -39,7 +45,7 @@ describe('#randomEl()', function () {
   });
 });
 
-describe('#doAll()', function () {
+describe('doAll()', function () {
   it('iterate and complete in async order', function (done) {
     const newArray = [];
     const oldArray = [1, 2, 3];
@@ -49,18 +55,26 @@ describe('#doAll()', function () {
         callback();
       }, 20 - el * 5); // Earlier elements in array have a longer timeout making the array reverse
     };
-    doAll(oldArray, (el, index, _done) => {
-      someCallbackFunc(el, () => {
-        _done();
-      });
-    }, function () {
-      done(assert.deepEqual(newArray, [3, 2, 1]));
-    });
+    doAll(
+      oldArray,
+      (el, index, _done) => {
+        someCallbackFunc(el, () => {
+          _done();
+        });
+      },
+      function () {
+        done(assert.deepEqual(newArray, [3, 2, 1]));
+      }
+    );
   });
   it('go straight to done for empty array', function (done) {
-    doAll([], (el, index, _done) => {
-      _done();
-    }, done);
+    doAll(
+      [],
+      (el, index, _done) => {
+        _done();
+      },
+      done
+    );
   });
   it('throw error when an array is not passed', function (done) {
     try {
@@ -79,7 +93,7 @@ describe('#doAll()', function () {
   });
 });
 
-describe('#forEachCallbacks()', function () {
+describe('forEachCallbacks()', function () {
   it('iterate and complete in order of array', function (done) {
     const newArray = [];
     const oldArray = [1, 2, 3];
@@ -87,13 +101,17 @@ describe('#forEachCallbacks()', function () {
       newArray.push(el);
       callback();
     };
-    forEachCallbacks(oldArray, (el, i, next) => {
-      someCallbackFunc(el, () => {
-        next();
-      });
-    }, function () {
-      done(assert.deepEqual(oldArray, newArray));
-    });
+    forEachCallbacks(
+      oldArray,
+      (el, i, next) => {
+        someCallbackFunc(el, () => {
+          next();
+        });
+      },
+      function () {
+        done(assert.deepEqual(oldArray, newArray));
+      }
+    );
   });
   it('throw error when an array is not passed', function (done) {
     try {
@@ -111,7 +129,7 @@ describe('#forEachCallbacks()', function () {
   });
 });
 
-describe('#arrayDelete()', function () {
+describe('arrayDelete()', function () {
   it('delete value from array', function () {
     var myArray = [1, 2, 3];
     arrayDelete(myArray, 1);
@@ -126,7 +144,7 @@ describe('#arrayDelete()', function () {
   });
 });
 
-describe('#Stash()', function () {
+describe('Stash', function () {
   var myStash = new Stash();
   var myId = myStash.put('My Message');
   var myId2 = myStash.put('My Message 2');

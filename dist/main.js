@@ -114,11 +114,130 @@ var randomEl = (function (arr) {
   return arr[randomInt(0, arr.length - 1)];
 });
 
+var noop = function noop() {};
+
+var makeNestedFlow = function makeNestedFlow(flow) {
+  return function (data, control) {
+    flow.run(data, control.next);
+  };
+};
+
+var parseTask = function parseTask(task) {
+  if (typeof task === 'function') {
+    return task;
+  }
+
+  if (task && typeof task.action === 'function') {
+    return task.action;
+  }
+
+  if (task && task.action && typeof task.action.run === 'function') {
+    return makeNestedFlow(task.action);
+  }
+
+  if (task && typeof task.run === 'function') {
+    return makeNestedFlow(task);
+  }
+
+  throw SyntaxError('Task in incorrect syntax', task);
+};
+
+var parseTasks = function parseTasks(tasks) {
+  var actions = [];
+  tasks.forEach(function (task) {
+    actions.push(parseTask(task));
+  });
+  return actions;
+};
+
+function Workflow(tasks) {
+  this._tasks = tasks || [];
+  this._actions = tasks ? parseTasks(tasks) : [];
+
+  this.run = function run(data, _finished) {
+    var _this = this;
+
+    var finished = _finished || noop;
+    var index = 0;
+    var control = {};
+
+    control.next = function (data2) {
+      if (index < _this._actions.length) {
+        _this._actions[index++](data2, control, index);
+      } else if (index === _this._actions.length) {
+        index++;
+        finished(data2);
+      }
+    };
+
+    control.exit = function (data2) {
+      if (index < _this._actions.length) {
+        index = _this._actions.length;
+        control.next(data2);
+      }
+    };
+
+    control.abort = function () {
+      index = _this._actions.length + 1;
+    };
+
+    control.next(data);
+  };
+
+  this._insertAtIndex = function _insertAtIndex(index, task) {
+    var action = parseTask(task);
+
+    this._tasks.splice(index, 0, task);
+
+    this._actions.splice(index, 0, action);
+  };
+
+  this.add = function add(task) {
+    var action = parseTask(task);
+
+    this._actions.push(action);
+
+    this._tasks.push(task);
+  };
+
+  this.insertBefore = function insertBefore(findFunc, task) {
+    var _index = this._tasks.findIndex(findFunc);
+
+    if (_index !== -1) this._insertAtIndex(_index, task);
+    return _index;
+  };
+
+  this.insertAfter = function insertAfter(findFunc, task) {
+    var _index = this._tasks.findIndex(findFunc);
+
+    if (_index !== -1) {
+      this._insertAtIndex(_index + 1, task);
+
+      return _index + 1;
+    }
+
+    return -1;
+  };
+
+  this.findAndDelete = function findAndDelete(findFunc) {
+    var _index = this._tasks.findIndex(findFunc);
+
+    if (_index !== -1) {
+      this._actions.splice(_index, 1);
+
+      this._tasks.splice(_index, 1);
+    }
+
+    return _index;
+  };
+}
+
 module.exports = {
   forEachCallbacks: forEachCallbacks,
   doAll: doAll,
   arrayDelete: arrayDelete,
   Stash: Stash,
   randomEl: randomEl,
-  randomInt: randomInt
+  randomInt: randomInt,
+  Workflow: Workflow
 };
