@@ -1,37 +1,79 @@
-const noop = () => {};
-const makeNestedFlow = (flow) => (data, control) => {
-  flow.run(data, control.next);
+const nestedPlWrap = (p) => (d, c) => {
+  p.run(d, c.next);
 };
 
-const parseTask = (task) => {
+const unblockWrap = (f) => (d, c) => {
+  setTimeout(() => {
+    f(d, c);
+  }, 0);
+};
+
+const skipErrorWrap = (f) => (d, c) => {
+  try {
+    f(d, c);
+  } catch (err) {
+    c.next(d);
+  }
+};
+
+/*
+const synchronousWrap = (f) => (d, c) => {
+  c.next(f(d));
+};
+*/
+
+const parseType = (task) => {
   if (typeof task === 'function') {
-    return task;
+    return { action: task, details: { action: task } };
   }
   if (task && typeof task.action === 'function') {
-    return task.action;
+    return { action: task.action, details: task };
   }
   if (task && task.action && typeof task.action.run === 'function') {
-    return makeNestedFlow(task.action);
+    return { action: nestedPlWrap(task.action), details: task };
   }
   if (task && typeof task.run === 'function') {
-    return makeNestedFlow(task);
+    return { action: nestedPlWrap(task), details: { action: task } };
   }
   throw SyntaxError('Task in incorrect syntax', task);
 };
+
+const parseOptions = (task) => {
+  if (task.details.options) {
+    let { action } = task;
+    if (task.details.options.unblock) action = unblockWrap(action);
+    if (task.details.options.skipError) action = skipErrorWrap(action);
+    return action;
+  }
+  return task.action;
+};
+
+const parseTask = (task) => {
+  const _task = parseType(task);
+  _task.action = parseOptions(_task);
+  return _task;
+};
+
 const parseTasks = (tasks) => {
   const actions = [];
+  const details = [];
   tasks.forEach((task) => {
-    actions.push(parseTask(task));
+    const { action, _details } = parseTask(task);
+    actions.push(action);
+    details.push(_details);
   });
-  return actions;
+  return { details, actions };
 };
 
 export default function Workflow(tasks) {
-  this._tasks = tasks || [];
-  this._actions = tasks ? parseTasks(tasks) : [];
-
-  this.run = function run(data, _finished) {
-    const finished = _finished || noop;
+  {
+    const { details, actions } = tasks
+      ? parseTasks(tasks)
+      : { details: [], actions: [] };
+    this._details = details;
+    this._actions = actions;
+  }
+  this.run = function run(data, finished) {
     let index = 0;
     const control = {};
     control.next = (data2) => {
@@ -39,7 +81,7 @@ export default function Workflow(tasks) {
         this._actions[index++](data2, control, index);
       } else if (index === this._actions.length) {
         index++;
-        finished(data2);
+        if (finished) finished(data2);
       }
     };
     control.exit = (data2) => {
@@ -55,25 +97,26 @@ export default function Workflow(tasks) {
   };
 
   this._insertAtIndex = function _insertAtIndex(index, task) {
-    const action = parseTask(task);
-    this._tasks.splice(index, 0, task);
+    const { details, action } = parseTask(task);
+    this._details.splice(index, 0, details);
     this._actions.splice(index, 0, action);
   };
 
   this.add = function add(task) {
-    const action = parseTask(task);
+    const { details, action } = parseTask(task);
     this._actions.push(action);
-    this._tasks.push(task);
+    this._details.push(details);
+    return this._actions.length;
   };
 
   this.insertBefore = function insertBefore(findFunc, task) {
-    const _index = this._tasks.findIndex(findFunc);
+    const _index = this._details.findIndex(findFunc);
     if (_index !== -1) this._insertAtIndex(_index, task);
     return _index;
   };
 
   this.insertAfter = function insertAfter(findFunc, task) {
-    const _index = this._tasks.findIndex(findFunc);
+    const _index = this._details.findIndex(findFunc);
     if (_index !== -1) {
       this._insertAtIndex(_index + 1, task);
       return _index + 1;
@@ -82,10 +125,10 @@ export default function Workflow(tasks) {
   };
 
   this.findAndDelete = function findAndDelete(findFunc) {
-    const _index = this._tasks.findIndex(findFunc);
+    const _index = this._details.findIndex(findFunc);
     if (_index !== -1) {
       this._actions.splice(_index, 1);
-      this._tasks.splice(_index, 1);
+      this._details.splice(_index, 1);
     }
     return _index;
   };

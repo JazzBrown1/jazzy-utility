@@ -114,50 +114,123 @@ var randomEl = (function (arr) {
   return arr[randomInt(0, arr.length - 1)];
 });
 
-var noop = function noop() {};
-
-var makeNestedFlow = function makeNestedFlow(flow) {
-  return function (data, control) {
-    flow.run(data, control.next);
+var nestedPlWrap = function nestedPlWrap(p) {
+  return function (d, c) {
+    p.run(d, c.next);
   };
 };
 
-var parseTask = function parseTask(task) {
+var unblockWrap = function unblockWrap(f) {
+  return function (d, c) {
+    setTimeout(function () {
+      f(d, c);
+    }, 0);
+  };
+};
+
+var skipErrorWrap = function skipErrorWrap(f) {
+  return function (d, c) {
+    try {
+      f(d, c);
+    } catch (err) {
+      c.next(d);
+    }
+  };
+};
+/*
+const synchronousWrap = (f) => (d, c) => {
+  c.next(f(d));
+};
+*/
+
+
+var parseType = function parseType(task) {
   if (typeof task === 'function') {
-    return task;
+    return {
+      action: task,
+      details: {
+        action: task
+      }
+    };
   }
 
   if (task && typeof task.action === 'function') {
-    return task.action;
+    return {
+      action: task.action,
+      details: task
+    };
   }
 
   if (task && task.action && typeof task.action.run === 'function') {
-    return makeNestedFlow(task.action);
+    return {
+      action: nestedPlWrap(task.action),
+      details: task
+    };
   }
 
   if (task && typeof task.run === 'function') {
-    return makeNestedFlow(task);
+    return {
+      action: nestedPlWrap(task),
+      details: {
+        action: task
+      }
+    };
   }
 
   throw SyntaxError('Task in incorrect syntax', task);
 };
 
+var parseOptions = function parseOptions(task) {
+  if (task.details.options) {
+    var action = task.action;
+    if (task.details.options.unblock) action = unblockWrap(action);
+    if (task.details.options.skipError) action = skipErrorWrap(action);
+    return action;
+  }
+
+  return task.action;
+};
+
+var parseTask = function parseTask(task) {
+  var _task = parseType(task);
+
+  _task.action = parseOptions(_task);
+  return _task;
+};
+
 var parseTasks = function parseTasks(tasks) {
   var actions = [];
+  var details = [];
   tasks.forEach(function (task) {
-    actions.push(parseTask(task));
+    var _parseTask = parseTask(task),
+        action = _parseTask.action,
+        _details = _parseTask._details;
+
+    actions.push(action);
+    details.push(_details);
   });
-  return actions;
+  return {
+    details: details,
+    actions: actions
+  };
 };
 
 function Workflow(tasks) {
-  this._tasks = tasks || [];
-  this._actions = tasks ? parseTasks(tasks) : [];
+  {
+    var _ref = tasks ? parseTasks(tasks) : {
+      details: [],
+      actions: []
+    },
+        details = _ref.details,
+        actions = _ref.actions;
 
-  this.run = function run(data, _finished) {
+    this._details = details;
+    this._actions = actions;
+  }
+
+  this.run = function run(data, finished) {
     var _this = this;
 
-    var finished = _finished || noop;
     var index = 0;
     var control = {};
 
@@ -166,7 +239,7 @@ function Workflow(tasks) {
         _this._actions[index++](data2, control, index);
       } else if (index === _this._actions.length) {
         index++;
-        finished(data2);
+        if (finished) finished(data2);
       }
     };
 
@@ -185,30 +258,36 @@ function Workflow(tasks) {
   };
 
   this._insertAtIndex = function _insertAtIndex(index, task) {
-    var action = parseTask(task);
+    var _parseTask2 = parseTask(task),
+        details = _parseTask2.details,
+        action = _parseTask2.action;
 
-    this._tasks.splice(index, 0, task);
+    this._details.splice(index, 0, details);
 
     this._actions.splice(index, 0, action);
   };
 
   this.add = function add(task) {
-    var action = parseTask(task);
+    var _parseTask3 = parseTask(task),
+        details = _parseTask3.details,
+        action = _parseTask3.action;
 
     this._actions.push(action);
 
-    this._tasks.push(task);
+    this._details.push(details);
+
+    return this._actions.length;
   };
 
   this.insertBefore = function insertBefore(findFunc, task) {
-    var _index = this._tasks.findIndex(findFunc);
+    var _index = this._details.findIndex(findFunc);
 
     if (_index !== -1) this._insertAtIndex(_index, task);
     return _index;
   };
 
   this.insertAfter = function insertAfter(findFunc, task) {
-    var _index = this._tasks.findIndex(findFunc);
+    var _index = this._details.findIndex(findFunc);
 
     if (_index !== -1) {
       this._insertAtIndex(_index + 1, task);
@@ -220,12 +299,12 @@ function Workflow(tasks) {
   };
 
   this.findAndDelete = function findAndDelete(findFunc) {
-    var _index = this._tasks.findIndex(findFunc);
+    var _index = this._details.findIndex(findFunc);
 
     if (_index !== -1) {
       this._actions.splice(_index, 1);
 
-      this._tasks.splice(_index, 1);
+      this._details.splice(_index, 1);
     }
 
     return _index;

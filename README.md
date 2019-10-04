@@ -7,56 +7,145 @@
 
 A small utility library for use with... Well anything really.
 
+### Table of contents
+
+1. [ Installation](#Install)
+2. [ Workflow](#workflow)
+3. [ Stash](#stash)
+4. [ forEachCallbacks](#forEachCallbacks)
+5. [ doAll](#doAll)
+6. [ arrayDelete](#arrayDelete)
+7. [ randomInt](#randomInt)
+8. [ randomEl](#randomEl)
+9. [ Report Bug](#bugs)
+
+<a name="Install"></a>
+
 ## Installation
 
 ### Installing
 
-~~~
+```
 npm install 'jazzy-utility'
-~~~
+```
 
 ### Importing
 
 Cjs
-~~~
+
+```
 const jazzy-utility = require('jazzy-utility');
 const Stash = jazzy-utility.Stash;
-~~~
+```
 
 Es Module
-~~~
+
+```
 import {Stash} from 'jazzy-utility';
-~~~
+```
+
+<a name="workflow"></a>
+
+## jazzy-utility.Workflow
+
+### _class_ Workflow()
+
+A class that allows developers to build and dynamically update workflows. This enables developers to build dynamic flows and add steps at runtime making versatile and easily extendable code.
+
+A work flow is made up of tasks which run sequentially; A task object contains an action which is a function, and optionally you can id for searching and an options object:
+
+```
+{
+  action: (data, control) => {
+    control.next(data);
+  },
+  options: {
+    skipError: true, // task will be skipped if an error is thrown
+    unblock: true, // will run the task at the end of the event queue good for spreading load when running cpu heavy workflows
+  },
+  id: 'some id'
+}
+```
+
+You can just pass the action function instead of the task object if you do not requires ids to search or additional options.
+
+Methods:
+<br/>run(data) => _void_
+<br/>add(_Object_ action) => _int_ insertedIndex
+<br/>insertAfter(_function_ findFunction, _Object_ action) => _int_ insertedIndex
+<br/>insertBefore(_function_ findFunction, _Object_ action) => _int_ insertedIndex
+<br/>findAndDelete(_function_ findFunction) => _int_ deletedIndex
+
+Usage:
+
+```
+const myTask = (taskID) => (arr, control) => {
+  arr.push(taskID);
+  control.next(arr);
+};
+
+const myWorkflow = new Workflow([
+  { action: myTask('b'), id: 'b' },
+  { action: myTask('c'), id: 'c' }
+]);
+
+myWorkflow.add({
+  action: myTask('e'), id: 'e'
+});
+
+myWorkflow.insertBefore((el) => el.id === 'b', {
+  action: myTask('a'), id: 'a'
+});
+
+myWorkflow.insertAfter((el) => el.id === 'c', {
+  action: myTask('d'), id: 'd'
+});
+
+myWorkflow.add(myTask('f'));
+
+myWorkflow.run([], (arr) => {
+  console.log(arr) // output: ['a', 'b', 'c', 'd', 'e', 'f']
+});
+```
+
+<a name="stash"></a>
 
 ## jazzy-utility.Stash
 
-### class Stash()
+A class that you can place data in and it returns an id as an integer. The data can then be retrieved with the integer. Particularly useful when interacting with external systems where a reference is required to relate a response to a query.
+
+### _class_ Stash()
 
 Methods:
-<br/>put(*any* value) => *int* id
-<br/>see(*int* id) => *any* value
-<br/>take(*int* id) => *any* value
-<br/>replace(*int* id, *any* value) => *void*
-<br/>size() => *int* size
-<br/>isEmpty() => *boolean* result
-<br/>clear() => *void*
+<br/>put(_any_ value) => _int_ id
+<br/>see(_int_ id) => _any_ value
+<br/>take(_int_ id) => _any_ value
+<br/>replace(_int_ id, _any_ value) => _void_
+<br/>size() => _int_ size
+<br/>isEmpty() => _boolean_ result
+<br/>clear() => _void_
+<br/>iterate(_function_ forEachFunction(_any_ item)) => _void_
 
 Usage:
-~~~
+
+```
 const myStash = new Stash();
 const myId = myStash.put('My Message');
 console.log(myStash.see(myId)); // output 'My Message'
 console.log(myStash.size()); // output 1
 myStash.take(myId);
 console.log(myStash.isEmpty()); // output true
-~~~
+```
+
+<a name="forEachCallbacks"></a>
 
 ## jazzy-utility.forEachCallbacks
 
-### *function* forEachCallbacks(*array* array, *function* forEachFunction, *function* thenFunction) => *void*
+### _function_ forEachCallbacks(_array_ array, _function_ forEachFunction, _function_ thenFunction) => _void_
 
 Usage:
-~~~
+
+```
 const actions = ['SaveLogs', 'CheckErrors', 'cleanUpData'];
 forEachCallbacks(actions, (action, index, next) => {
   performAction(action, (result) => {
@@ -66,18 +155,21 @@ forEachCallbacks(actions, (action, index, next) => {
 }, () => {
   console.log('Job Complete');
 });
-~~~
+```
+
+<a name="doAll"></a>
 
 ## jazzy-utility.doAll
 
-### *function* doAll(*array* array, *function* forEachFunction, *function* thenFunction) => *void*
+### _function_ doAll(_array_ array, _function_ forEachFunction, _function_ thenFunction) => _void_
 
 Usage:
-~~~
+
+```
 const messages = [
   {to: 'user1', text: 'hello user1'},
   {to: 'user2', text: 'hello user2'},
-  {to: 'user3', text: 'hello user3'}  
+  {to: 'user3', text: 'hello user3'}
 ];
 doAll(messages, (message, index, done) => {
   sendMessage(message.to, message.text, () => {
@@ -86,15 +178,49 @@ doAll(messages, (message, index, done) => {
 }, () => {
   console.log('Sending Complete');
 });
-~~~
+```
+
+<a name="arrayDelete"></a>
 
 ## jazzy-utility.arrayDelete
 
-### *function* arrayDelete(*array* array, *any* value) => *boolean* result
+### _function_ arrayDelete(_array_ array, _any_ value) => _boolean_ result
 
 Usage:
-~~~
+
+```
 const myArr = ['y', 'e', 'l', 'l', 'o'];
 arrayDelete(myArr, 'l');
 console.log(myArr); // output: ['y', 'e', 'l', 'o']
-~~~
+```
+
+<a name="randomInt"></a>
+
+## jazzy-utility.randomInt
+
+### _function_ randomInt(_int_ min, _int_ max) => _int_ result
+
+Usage:
+
+```
+console.log(randomInt(0, 10)); // outputs an integer between 0 and 5 inclusive.
+```
+
+<a name="randomEl"></a>
+
+## jazzy-utility.randomEl
+
+### _function_ randomEl(_array_ array) => _any_ result
+
+Usage:
+
+```
+const myArr = ['y', 'e', 'l', 'l', 'o'];
+console.log(randomEl(myArr)); // outputs a random element from the array.
+```
+
+<a name="bugs"></a>
+
+## Issues
+
+If you encounter any issues please report them on the Library's [Github](https://github.com/JazzBrown1/jazzy-utility/issues).
