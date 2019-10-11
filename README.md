@@ -14,10 +14,12 @@ A small utility library for use with... Well anything really.
 3. [ Stash](#stash)
 4. [ forEachCallbacks](#forEachCallbacks)
 5. [ doAll](#doAll)
-6. [ arrayDelete](#arrayDelete)
+6. [ deleteArrayElement](#deleteArrayElement)
 7. [ randomInt](#randomInt)
 8. [ randomEl](#randomEl)
-9. [ Report Bug](#bugs)
+9. [ randomEls](#randomEls)
+10. [ extractRandomEls](#extractRandomEls)
+11. [ Report Bug](#bugs)
 
 <a name="Install"></a>
 
@@ -166,31 +168,39 @@ forEachCallbacks(actions, (action, index, next) => {
 Usage:
 
 ```
+const displayDelayedMessage = (delay, message, cb) => {
+  setTimeout(() => {
+    console.log(message);
+    cb();
+  }, delay)
+}
+
 const messages = [
-  {to: 'user1', text: 'hello user1'},
-  {to: 'user2', text: 'hello user2'},
-  {to: 'user3', text: 'hello user3'}
+  {delay: '200', text: 'hello user1'},
+  {delay: '150', text: 'hello user2'},
+  {delay: '100', text: 'hello user3'}
 ];
+
 doAll(messages, (message, index, done) => {
-  sendMessage(message.to, message.text, () => {
+  displayDelayedMessage(message.delay, message.text, () => {
     done();
   });
 }, () => {
-  console.log('Sending Complete');
+  console.log('Job Complete');
 });
 ```
 
-<a name="arrayDelete"></a>
+<a name="deleteArrayElement"></a>
 
-## jazzy-utility.arrayDelete
+## jazzy-utility.deleteArrayElement
 
-### _function_ arrayDelete(_array_ array, _any_ value) => _boolean_ result
+### _function_ deleteArrayElement(_array_ array, _any_ value) => _boolean_ result
 
 Usage:
 
 ```
 const myArr = ['y', 'e', 'l', 'l', 'o'];
-arrayDelete(myArr, 'l');
+deleteArrayElement(myArr, 'l');
 console.log(myArr); // output: ['y', 'e', 'l', 'o']
 ```
 
@@ -203,7 +213,7 @@ console.log(myArr); // output: ['y', 'e', 'l', 'o']
 Usage:
 
 ```
-console.log(randomInt(0, 10)); // outputs an integer between 0 and 5 inclusive.
+console.log(randomInt(0, 5)); // outputs an integer between 0 and 5 inclusive.
 ```
 
 <a name="randomEl"></a>
@@ -217,6 +227,34 @@ Usage:
 ```
 const myArr = ['y', 'e', 'l', 'l', 'o'];
 console.log(randomEl(myArr)); // outputs a random element from the array.
+```
+
+<a name="randomEls"></a>
+
+## jazzy-utility.randomEls
+
+### _function_ randomEls(_number_ multiplier, _array_ array) => _array_ result
+
+Usage:
+
+```
+const myArr = [0, 1, 2, 3, 4];
+console.log(randomEls(0.4, myArr)); // outputs an array with two random elements.
+console.log(myArr.length) // Outputs 5 as original array is not affected.
+```
+
+<a name="extractRandomEls"></a>
+
+## jazzy-utility.extractRandomEls
+
+### _function_ extractRandomEls((_number_ multiplier, _array_ array) => _array_ result
+
+Usage:
+
+```
+const myArr = [0, 1, 2, 3, 4];
+console.log(randomEls(0.4, myArr)); // outputs an array with two random elements.
+console.log(myArr.length) // Outputs 3 as 2 elements have been extracted
 ```
 
 <a name="bugs"></a>

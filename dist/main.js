@@ -109,9 +109,44 @@ var randomInt = (function (min, max) {
 });
 
 var randomEl = (function (arr) {
-  if (!Array.isArray(arr)) throw new TypeError("randomEl input must be of type Array");
-  if (arr.length === 0) throw new Error("randomEl cannot accept an empty array");
+  if (!Array.isArray(arr)) {
+    throw new TypeError('randomEl input must be of type Array');
+  }
+
+  if (arr.length === 0) {
+    throw new Error('randomEl cannot accept an empty array');
+  }
+
   return arr[randomInt(0, arr.length - 1)];
+});
+
+var extractRandomEls = (function (multiplier, arr) {
+  if (!Array.isArray(arr) || arr.length < 1) {
+    throw new Error('First argument must be an array with at least one element in it');
+  }
+
+  if (typeof multiplier !== 'number' || multiplier > 1) {
+    throw new Error('Multiplier must be a number between 0 and 1');
+  }
+
+  var result = [];
+  var groupAmount = Math.ceil(arr.length * multiplier);
+
+  for (var i = 0; i < groupAmount; i++) {
+    var index = randomInt(0, arr.length - 1);
+    var el = arr.splice(index, 1)[0];
+    result.push(el);
+  }
+
+  return result;
+});
+
+var randomEls = (function (multiplier, arr) {
+  if (!Array.isArray(arr) || arr.length < 1) {
+    throw new Error('First argument must be an array with at least one element in it');
+  }
+
+  return extractRandomEls(multiplier, arr.slice(0));
 });
 
 var nestedPlWrap = function nestedPlWrap(p) {
@@ -314,9 +349,12 @@ function Workflow(tasks) {
 module.exports = {
   forEachCallbacks: forEachCallbacks,
   doAll: doAll,
-  arrayDelete: arrayDelete,
+  deleteArrayEl: arrayDelete,
   Stash: Stash,
   randomEl: randomEl,
+  randomEls: randomEls,
   randomInt: randomInt,
-  Workflow: Workflow
+  Workflow: Workflow,
+  extractRandomEls: extractRandomEls,
+  arrayDelete: arrayDelete
 };
