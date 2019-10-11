@@ -37,28 +37,28 @@ describe('extractRandomEls()', function () {
   it('throws error if non array is passed', function (done) {
     try {
       extractRandomEls(0.5, 'notArray');
-    } catch {
+    } catch (e) {
       done();
     }
   });
   it('throws error if empty array is passed', function (done) {
     try {
       extractRandomEls(0.5, []);
-    } catch {
+    } catch (e) {
       done();
     }
   });
   it('throws error if non number is passed', function (done) {
     try {
       extractRandomEls('notNumber', [1, 2, 3]);
-    } catch {
+    } catch (e) {
       done();
     }
   });
   it('throws error if too large number is passed', function (done) {
     try {
       extractRandomEls(2, [1, 2, 3]);
-    } catch {
+    } catch (e) {
       done();
     }
   });

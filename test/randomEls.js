@@ -37,28 +37,28 @@ describe('randomEls()', function () {
   it('throws error if non array is passed', function (done) {
     try {
       randomEls(0.5, 'notArray');
-    } catch {
+    } catch (e) {
       done();
     }
   });
   it('throws error if empty array is passed', function (done) {
     try {
       randomEls(0.5, []);
-    } catch {
+    } catch (e) {
       done();
     }
   });
   it('throws error if non number is passed', function (done) {
     try {
       randomEls('notNumber', [1, 2, 3]);
-    } catch {
+    } catch (e) {
       done();
     }
   });
   it('throws error if too large number is passed', function (done) {
     try {
       randomEls(2, [1, 2, 3]);
-    } catch {
+    } catch (e) {
       done();
     }
   });
