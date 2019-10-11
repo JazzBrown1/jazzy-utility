@@ -1,14 +1,36 @@
-import forEachCallbacks from './forEachCallbacks';
-import doAll from './doAll';
-import arrayDelete from './arrayDelete';
-import Stash from './stash';
-import randomInt from './randomInt';
-import randomEl from './randomEl';
+import forEachCallbacks from "./forEachCallbacks";
+import doAll from "./doAll";
+import deleteArrayEl from "./deleteArrayEl";
+import Stash from "./stash";
+import randomInt from "./randomInt";
+import randomEl from "./randomEl";
+import randomEls from "./randomEls";
+import Workflow from "./workflow";
+import extractRandomEls from "./extractRandomEls";
 
 export {
-  forEachCallbacks, doAll, arrayDelete, Stash, randomEl, randomInt
+  forEachCallbacks,
+  doAll,
+  deleteArrayEl,
+  Stash,
+  randomEls,
+  randomEl,
+  randomInt,
+  Workflow,
+  extractRandomEls,
+  deleteArrayEl as arrayDelete
 };
 
 export default {
-  forEachCallbacks, doAll, arrayDelete, Stash, randomEl, randomInt
+  forEachCallbacks,
+  doAll,
+  deleteArrayEl,
+  Stash,
+  randomEl,
+  randomEls,
+  randomInt,
+  Workflow,
+  extractRandomEls,
+  // to be deprecated
+  arrayDelete: deleteArrayEl
 };
