@@ -176,9 +176,9 @@ const displayDelayedMessage = (delay, message, cb) => {
 }
 
 const messages = [
-  {delay: '200', text: 'hello user1'},
-  {delay: '150', text: 'hello user2'},
-  {delay: '100', text: 'hello user3'}
+  {delay: '200', text: 'Message 1'},
+  {delay: '150', text: 'Message 2'},
+  {delay: '100', text: 'Message 3'}
 ];
 
 doAll(messages, (message, index, done) => {
