@@ -1,18 +1,20 @@
+let idCounter = 0;
+
 /**
  * A Stash class
  */
 
 const Stash = function Stash() {
   this._stash = {};
-  this._id = 1;
+  this.generateId = () => `id_${idCounter++}`;
   this.put = function put(val) {
-    this._stash[this._id] = val;
-    return this._id++;
+    const id = this.generateId();
+    this._stash[id] = val;
+    return id;
   };
   this.take = function take(id) {
     const val = this._stash[id];
     if (this._stash[id]) delete this._stash[id];
-    if (Object.keys(this._stash).length === 0) this._id = 1;
     return val;
   };
   this.see = function see(id) {
@@ -20,7 +22,6 @@ const Stash = function Stash() {
   };
   this.clear = function clear() {
     this._stash = {};
-    this._id = 1;
   };
   this.iterate = function iterate(callback) {
     Object.keys(this._stash).forEach((key) => {

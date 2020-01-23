@@ -49,22 +49,27 @@ var arrayDelete = function arrayDelete(arr, item) {
   return -1;
 };
 
+var idCounter = 0;
 /**
  * A Stash class
  */
+
 var Stash = function Stash() {
   this._stash = {};
-  this._id = 1;
+
+  this.generateId = function () {
+    return "id_".concat(idCounter++);
+  };
 
   this.put = function put(val) {
-    this._stash[this._id] = val;
-    return this._id++;
+    var id = this.generateId();
+    this._stash[id] = val;
+    return id;
   };
 
   this.take = function take(id) {
     var val = this._stash[id];
     if (this._stash[id]) delete this._stash[id];
-    if (Object.keys(this._stash).length === 0) this._id = 1;
     return val;
   };
 
@@ -74,7 +79,6 @@ var Stash = function Stash() {
 
   this.clear = function clear() {
     this._stash = {};
-    this._id = 1;
   };
 
   this.iterate = function iterate(callback) {
@@ -103,7 +107,7 @@ var randomInt = (function (min, max) {
 
   var _max = Math.floor(max);
 
-  return Math.floor(Math.random() * (_max - _min)) + _min;
+  return Math.floor(Math.random() * (_max + 1 - _min)) + _min;
 });
 
 var randomEl = (function (arr) {
