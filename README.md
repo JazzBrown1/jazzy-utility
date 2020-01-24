@@ -119,10 +119,10 @@ A class that you can place data in and it returns an id as an integer. The data 
 ### _class_ Stash()
 
 Methods:
-<br/>put(_any_ value) => _int_ id
-<br/>see(_int_ id) => _any_ value
-<br/>take(_int_ id) => _any_ value
-<br/>replace(_int_ id, _any_ value) => _void_
+<br/>put(_any_ value) => _text_ id
+<br/>see(_text_ id) => _any_ value
+<br/>take(_text_ id) => _any_ value
+<br/>replace(_text_ id, _any_ value) => _void_
 <br/>size() => _int_ size
 <br/>isEmpty() => _boolean_ result
 <br/>clear() => _void_
@@ -253,7 +253,7 @@ Usage:
 
 ```
 const myArr = [0, 1, 2, 3, 4];
-console.log(randomEls(0.4, myArr)); // outputs an array with two random elements.
+console.log(extractRandomEls(0.4, myArr)); // outputs an array with two random elements.
 console.log(myArr.length) // Outputs 3 as 2 elements have been extracted
 ```
 
