@@ -226,7 +226,7 @@ Usage:
 
 ```
 const myArr = ['y', 'e', 'l', 'l', 'o'];
-console.log(randomEl(myArr)); // outputs a random element from the array.
+console.log(randomEl(myArr)); // outputs a random element from the input array.
 ```
 
 <a name="randomEls"></a>

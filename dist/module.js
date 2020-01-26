@@ -348,6 +348,8 @@ function Workflow(tasks) {
   };
 }
 
+var store = {};
+
 var index = {
   forEachCallbacks: forEachCallbacks,
   doAll: doAll,
@@ -363,4 +365,4 @@ var index = {
 };
 
 export default index;
-export { Stash, Workflow, arrayDelete, arrayDelete as deleteArrayEl, doAll, extractRandomEls, forEachCallbacks, randomEl, randomEls, randomInt };
+export { Stash, Workflow, arrayDelete, arrayDelete as deleteArrayEl, doAll, extractRandomEls, forEachCallbacks, randomEl, randomEls, randomInt, store };

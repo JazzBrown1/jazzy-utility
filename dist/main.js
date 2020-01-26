@@ -350,6 +350,8 @@ function Workflow(tasks) {
   };
 }
 
+var store = {};
+
 module.exports = {
   forEachCallbacks: forEachCallbacks,
   doAll: doAll,
@@ -360,5 +362,6 @@ module.exports = {
   randomInt: randomInt,
   Workflow: Workflow,
   extractRandomEls: extractRandomEls,
-  arrayDelete: arrayDelete
+  arrayDelete: arrayDelete,
+  store: store
 };
