@@ -11,3 +11,4 @@ require('./doAll');
 require('./forEachCallbacks');
 require('./deleteArrayEl');
 require('./stash');
+require('./store');
