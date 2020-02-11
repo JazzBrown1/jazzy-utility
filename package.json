@@ -10,7 +10,7 @@
   "module": "dist/module.js",
   "scripts": {
     "test": "nyc mocha",
-    "coverage": "nyc report --reporter=lcov | coveralls",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "build": "rollup -c"
   },
   "author": "Jazz Brown",
