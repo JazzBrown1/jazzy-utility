@@ -7,32 +7,44 @@ import randomEl from './randomEl';
 import randomEls from './randomEls';
 import Workflow from './workflow';
 import extractRandomEls from './extractRandomEls';
-import store from './store';
+import { store } from './store';
 
 export {
   forEachCallbacks,
   doAll,
-  deleteArrayEl,
   Stash,
-  randomEls,
-  randomEl,
+  randomEl as randomArrayElement,
+  randomEls as randomArrayElements,
   randomInt,
+  extractRandomEls as extractRandomArrayElements,
+  deleteArrayEl as deleteArrayElement,
+  // experimental
+  store,
   Workflow,
+  // to be deprecated for more explanatory names
+  randomEl,
+  randomEls,
   extractRandomEls,
   deleteArrayEl as arrayDelete,
-  store
+  deleteArrayEl
 };
 
 export default {
   forEachCallbacks,
   doAll,
-  deleteArrayEl,
   Stash,
+  randomArrayElement: randomEl,
+  randomArrayElements: randomEls,
+  randomInt,
+  extractRandomArrayElements: extractRandomEls,
+  deleteArrayElement: deleteArrayEl,
+  // experimental
+  store,
+  Workflow,
+  // to be deprecated for more explanatory names
   randomEl,
   randomEls,
-  randomInt,
-  Workflow,
   extractRandomEls,
-  // to be deprecated
-  arrayDelete: deleteArrayEl
+  arrayDelete: deleteArrayEl,
+  deleteArrayEl,
 };
