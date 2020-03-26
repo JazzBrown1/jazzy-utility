@@ -9,7 +9,7 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "scripts": {
-    "test": "nyc mocha",
+    "test": "npm run build && nyc mocha",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "build": "rollup -c"
   },

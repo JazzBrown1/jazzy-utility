@@ -36,7 +36,7 @@ var doAll = function doAll(arr, callback, finished) {
   });
 };
 
-var arrayDelete = function arrayDelete(arr, item) {
+var deleteArrayEl = function deleteArrayEl(arr, item) {
   if (!Array.isArray(arr)) return false;
 
   var _index = arr.findIndex(function (_item) {
@@ -350,18 +350,71 @@ function Workflow(tasks) {
   };
 }
 
-var store = {};
+function Store() {
+  var _this = this;
+
+  this._values = {};
+  this._listeners = {};
+  this._reducers = {};
+
+  this.get = function (key) {
+    return _this._values[key];
+  };
+
+  this.set = function (key, value) {
+    var oldState = _this._values[key];
+    _this._values[key] = value;
+    if (_this._listeners[key]) _this._listeners[key].forEach(function (cb) {
+      return cb(value, oldState, key);
+    });
+    return value;
+  };
+
+  this.setReducer = function (key, reducer) {
+    _this._reducers[key] = function (action) {
+      var oldState = _this._values[key];
+      var result = reducer(oldState, action);
+      _this._values[key] = result;
+      if (_this._listeners[key] && oldState !== result) _this._listeners[key].forEach(function (cb) {
+        return cb(result, oldState, key);
+      });
+      return result;
+    };
+  };
+
+  this.reduce = function (key, action) {
+    return _this._reducers[key] ? _this._reducers[key](action) : false;
+  };
+
+  this.listen = function (key, listener) {
+    if (_this._listeners[key]) _this._listeners[key].push(listener);else _this._listeners[key] = [listener];
+    return {
+      remove: function remove() {
+        var arr = _this._listeners[key];
+        return Boolean(deleteArrayEl(arr, listener) + 1);
+      }
+    };
+  };
+}
+
+var store = new Store();
 
 module.exports = {
   forEachCallbacks: forEachCallbacks,
   doAll: doAll,
-  deleteArrayEl: arrayDelete,
   Stash: Stash,
+  randomArrayElement: randomEl,
+  randomArrayElements: randomEls,
+  randomInt: randomInt,
+  extractRandomArrayElements: extractRandomEls,
+  deleteArrayElement: deleteArrayEl,
+  // experimental
+  store: store,
+  Workflow: Workflow,
+  // to be deprecated for more explanatory names
   randomEl: randomEl,
   randomEls: randomEls,
-  randomInt: randomInt,
-  Workflow: Workflow,
   extractRandomEls: extractRandomEls,
-  arrayDelete: arrayDelete,
-  store: store
+  arrayDelete: deleteArrayEl,
+  deleteArrayEl: deleteArrayEl
 };
