@@ -10,15 +10,15 @@ A small utility library for use with... Well anything really.
 ### Table of contents
 
 1. [ Installation](#Install)
-2. [ Workflow](#workflow)
-3. [ Stash](#stash)
-4. [ forEachCallbacks](#forEachCallbacks)
-5. [ doAll](#doAll)
-6. [ deleteArrayElement](#deleteArrayElement)
-7. [ randomInt](#randomInt)
-8. [ randomEl](#randomEl)
-9. [ randomEls](#randomEls)
-10. [ extractRandomEls](#extractRandomEls)
+2. [ Stash](#stash)
+3. [ forEachCallbacks](#forEachCallbacks)
+4. [ doAll](#doAll)
+5. [ deleteArrayElement](#deleteArrayElement)
+6. [ randomInt](#randomInt)
+7. [ randomArrayElement](#randomArrayElement)
+8. [ randomArrayElements](#randomArrayElements)
+9. [ extractRandomArrayElements](#extractRandomArrayElements)
+10. [ Workflow](#workflow)
 11. [ Report Bug](#bugs)
 
 <a name="Install"></a>
@@ -44,70 +44,6 @@ Es Module
 
 ```
 import {Stash} from 'jazzy-utility';
-```
-
-<a name="workflow"></a>
-
-## jazzy-utility.Workflow
-
-### _class_ Workflow()
-
-A class that allows developers to build and dynamically update workflows. This enables developers to build dynamic flows and add steps at runtime making versatile and easily extendable code.
-
-A work flow is made up of tasks which run sequentially; A task object contains an action which is a function, and optionally you can id for searching and an options object:
-
-```
-{
-  action: (data, control) => {
-    control.next(data);
-  },
-  options: {
-    skipError: true, // task will be skipped if an error is thrown
-    unblock: true, // will run the task at the end of the event queue good for spreading load when running cpu heavy workflows
-  },
-  id: 'some id'
-}
-```
-
-You can just pass the action function instead of the task object if you do not requires ids to search or additional options.
-
-Methods:
-<br/>run(data) => _void_
-<br/>add(_Object_ action) => _int_ insertedIndex
-<br/>insertAfter(_function_ findFunction, _Object_ action) => _int_ insertedIndex
-<br/>insertBefore(_function_ findFunction, _Object_ action) => _int_ insertedIndex
-<br/>findAndDelete(_function_ findFunction) => _int_ deletedIndex
-
-Usage:
-
-```
-const myTask = (taskID) => (arr, control) => {
-  arr.push(taskID);
-  control.next(arr);
-};
-
-const myWorkflow = new Workflow([
-  { action: myTask('b'), id: 'b' },
-  { action: myTask('c'), id: 'c' }
-]);
-
-myWorkflow.add({
-  action: myTask('e'), id: 'e'
-});
-
-myWorkflow.insertBefore((el) => el.id === 'b', {
-  action: myTask('a'), id: 'a'
-});
-
-myWorkflow.insertAfter((el) => el.id === 'c', {
-  action: myTask('d'), id: 'd'
-});
-
-myWorkflow.add(myTask('f'));
-
-myWorkflow.run([], (arr) => {
-  console.log(arr) // output: ['a', 'b', 'c', 'd', 'e', 'f']
-});
 ```
 
 <a name="stash"></a>
@@ -216,45 +152,109 @@ Usage:
 console.log(randomInt(0, 5)); // outputs an integer between 0 and 5 inclusive.
 ```
 
-<a name="randomEl"></a>
+<a name="randomArrayElement"></a>
 
-## jazzy-utility.randomEl
+## jazzy-utility.randomArrayElement
 
-### _function_ randomEl(_array_ array) => _any_ result
+### _function_ randomArrayElement(_array_ array) => _any_ result
 
 Usage:
 
 ```
 const myArr = ['y', 'e', 'l', 'l', 'o'];
-console.log(randomEl(myArr)); // outputs a random element from the input array.
+console.log(randomArrayElement(myArr)); // outputs a random element from the input array.
 ```
 
-<a name="randomEls"></a>
+<a name="randomArrayElements"></a>
 
-## jazzy-utility.randomEls
+## jazzy-utility.randomArrayElements
 
-### _function_ randomEls(_number_ multiplier, _array_ array) => _array_ result
+### _function_ randomArrayElements(_number_ multiplier, _array_ array) => _array_ result
 
 Usage:
 
 ```
 const myArr = [0, 1, 2, 3, 4];
-console.log(randomEls(0.4, myArr)); // outputs an array with two random elements.
+console.log(randomArrayElements(0.4, myArr)); // outputs an array with two random elements.
 console.log(myArr.length) // Outputs 5 as original array is not affected.
 ```
 
-<a name="extractRandomEls"></a>
+<a name="extractRandomArrayElements"></a>
 
-## jazzy-utility.extractRandomEls
+## jazzy-utility.extractRandomArrayElements
 
-### _function_ extractRandomEls((_number_ multiplier, _array_ array) => _array_ result
+### _function_ extractRandomArrayElements((_number_ multiplier, _array_ array) => _array_ result
 
 Usage:
 
 ```
 const myArr = [0, 1, 2, 3, 4];
-console.log(extractRandomEls(0.4, myArr)); // outputs an array with two random elements.
+console.log(extractRandomArrayElements(0.4, myArr)); // outputs an array with two random elements.
 console.log(myArr.length) // Outputs 3 as 2 elements have been extracted
+```
+
+<a name="workflow"></a>
+
+## jazzy-utility.Workflow
+
+### _class_ Workflow()
+
+A class that allows developers to build and dynamically update workflows. This enables developers to build dynamic flows and add steps at runtime making versatile and easily extendable code.
+
+A work flow is made up of tasks which run sequentially; A task object contains an action which is a function, and optionally you can id for searching and an options object:
+
+```
+{
+  action: (data, control) => {
+    control.next(data);
+  },
+  options: {
+    skipError: true, // task will be skipped if an error is thrown
+    unblock: true, // will run the task at the end of the event queue good for spreading load when running cpu heavy workflows
+  },
+  id: 'some id'
+}
+```
+
+You can just pass the action function instead of the task object if you do not requires ids to search or additional options.
+
+Methods:
+<br/>run(data) => _void_
+<br/>add(_Object_ action) => _int_ insertedIndex
+<br/>insertAfter(_function_ findFunction, _Object_ action) => _int_ insertedIndex
+<br/>insertBefore(_function_ findFunction, _Object_ action) => _int_ insertedIndex
+<br/>findAndDelete(_function_ findFunction) => _int_ deletedIndex
+
+Usage:
+
+```
+const myTask = (taskID) => (arr, control) => {
+  arr.push(taskID);
+  control.next(arr);
+};
+
+const myWorkflow = new Workflow([
+  { action: myTask('b'), id: 'b' },
+  { action: myTask('c'), id: 'c' }
+]);
+
+myWorkflow.add({
+  action: myTask('e'), id: 'e'
+});
+
+myWorkflow.insertBefore((el) => el.id === 'b', {
+  action: myTask('a'), id: 'a'
+});
+
+myWorkflow.insertAfter((el) => el.id === 'c', {
+  action: myTask('d'), id: 'd'
+});
+
+myWorkflow.add(myTask('f'));
+
+myWorkflow.run([], (arr) => {
+  console.log(arr) // output: ['a', 'b', 'c', 'd', 'e', 'f']
+});
 ```
 
 <a name="bugs"></a>

@@ -7,18 +7,24 @@ import randomEl from './randomEl';
 import randomEls from './randomEls';
 import Workflow from './workflow';
 import extractRandomEls from './extractRandomEls';
-import store from './store';
+import { store } from './store';
 
 module.exports = {
   forEachCallbacks,
   doAll,
-  deleteArrayEl,
   Stash,
+  randomArrayElement: randomEl,
+  randomArrayElements: randomEls,
+  randomInt,
+  extractRandomArrayElements: extractRandomEls,
+  deleteArrayElement: deleteArrayEl,
+  // experimental
+  store,
+  Workflow,
+  // to be deprecated for more explanatory names
   randomEl,
   randomEls,
-  randomInt,
-  Workflow,
   extractRandomEls,
   arrayDelete: deleteArrayEl,
-  store
+  deleteArrayEl,
 };
