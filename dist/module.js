@@ -397,15 +397,59 @@ function Store() {
 
 var store = new Store();
 
+// eslint-disable-next-line consistent-return
+var doAllAsync = function doAllAsync(arr, callback) {
+  return new Promise(function (resolve, reject) {
+    if (!Array.isArray(arr)) return reject(new TypeError());
+    if (arr.length === 0) return resolve();
+    var counter = 0;
+    arr.forEach(function (el, index) {
+      callback(el, index).then(function () {
+        if (++counter === arr.length) resolve();
+      })["catch"](function (err) {
+        return reject(err);
+      });
+    });
+  });
+};
+
+var drill = function drill(arr, obj) {
+  return arr.reduce(function (acc, cur) {
+    if (!acc[cur]) return undefined;
+    return acc[cur];
+  }, obj);
+};
+
+/**
+ * Foreach loop that allows callbacks
+ * @param {array} array
+ * @param {callback} callback
+ */
+var forEachAsync = function forEachAsync(arr, callback) {
+  return new Promise(function (resolve, reject) {
+    if (!Array.isArray(arr)) reject(new TypeError());
+    var index = 0;
+
+    var next = function next() {
+      if (index < arr.length) callback(arr[index], index++).then(next)["catch"](reject);else resolve();
+    };
+
+    next();
+  });
+};
+
 var index = {
   forEachCallbacks: forEachCallbacks,
+  doAllAsync: doAllAsync,
   doAll: doAll,
   Stash: Stash,
+  drill: drill,
   randomArrayElement: randomEl,
   randomArrayElements: randomEls,
   randomInt: randomInt,
   extractRandomArrayElements: extractRandomEls,
   deleteArrayElement: deleteArrayEl,
+  forEachAsync: forEachAsync,
   // experimental
   store: store,
   Workflow: Workflow,
@@ -418,4 +462,4 @@ var index = {
 };
 
 export default index;
-export { Stash, Workflow, deleteArrayEl as arrayDelete, deleteArrayEl, deleteArrayEl as deleteArrayElement, doAll, extractRandomEls as extractRandomArrayElements, extractRandomEls, forEachCallbacks, randomEl as randomArrayElement, randomEls as randomArrayElements, randomEl, randomEls, randomInt, store };
+export { Stash, Workflow, deleteArrayEl as arrayDelete, deleteArrayEl, deleteArrayEl as deleteArrayElement, doAll, doAllAsync, drill, extractRandomEls as extractRandomArrayElements, extractRandomEls, forEachAsync, forEachCallbacks, randomEl as randomArrayElement, randomEls as randomArrayElements, randomEl, randomEls, randomInt, store };

@@ -3,19 +3,22 @@ import minify from 'rollup-plugin-babel-minify';
 import cleanup from 'rollup-plugin-cleanup';
 
 
+import { getBabelOutputPlugin } from '@rollup/plugin-babel';
+
 export default [
   {
     input: 'src/index-cjs.js',
     plugins: [
-      babel({
-        exclude: 'node_modules/**'
-      }),
+      getBabelOutputPlugin({
+        presets: ['@babel/env']
+      })
     ],
     output: [
       {
         file: './dist/main.js',
         format: 'cjs',
-        name: 'jazzy-utility'
+        name: 'jazzy-utility',
+        esModule: false,
       }
     ]
   },
