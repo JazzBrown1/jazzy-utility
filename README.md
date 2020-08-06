@@ -11,15 +11,16 @@ A small utility library for use with... Well anything really.
 
 1. [ Installation](#Install)
 2. [ Stash](#stash)
-3. [ forEachCallbacks](#forEachCallbacks)
-4. [ doAll](#doAll)
-5. [ deleteArrayElement](#deleteArrayElement)
-6. [ randomInt](#randomInt)
-7. [ randomArrayElement](#randomArrayElement)
-8. [ randomArrayElements](#randomArrayElements)
-9. [ extractRandomArrayElements](#extractRandomArrayElements)
-10. [ Workflow](#workflow)
-11. [ Report Bug](#bugs)
+3. [ doAllAsync](#doAllAsync)
+4. [ doAllCallbacks](#doAllCallbacks)
+5. [ drill](#drill)
+6. [ deleteArrayElement](#deleteArrayElement)
+7. [ randomInt](#randomInt)
+8. [ randomArrayElement](#randomArrayElement)
+9. [ randomArrayElements](#randomArrayElements)
+10. [ extractRandomArrayElements](#extractRandomArrayElements)
+11. [ Workflow](#workflow)
+12. [ Report Bug](#bugs)
 
 <a name="Install"></a>
 
@@ -48,7 +49,7 @@ import {Stash} from 'jazzy-utility';
 
 <a name="stash"></a>
 
-## jazzy-utility.Stash
+## Stash
 
 A class that you can place data in and it returns an id as an integer. The data can then be retrieved with the integer. Particularly useful when interacting with external systems where a reference is required to relate a response to a query.
 
@@ -75,31 +76,32 @@ myStash.take(myId);
 console.log(myStash.isEmpty()); // output true
 ```
 
-<a name="forEachCallbacks"></a>
+<a name="doAllAsync"></a>
 
-## jazzy-utility.forEachCallbacks
+## doAllAsync
 
-### _function_ forEachCallbacks(_array_ array, _function_ forEachFunction, _function_ thenFunction) => _void_
+### _function_ doAllCallbacks(_array_ array, _function_ forEachFunction, _function_ thenFunction) => _void_
 
 Usage:
 
 ```
-const actions = ['SaveLogs', 'CheckErrors', 'cleanUpData'];
-forEachCallbacks(actions, (action, index, next) => {
-  performAction(action, (result) => {
-    if (result) next();
-    else console.log('Failed at action ' + action + ' and aborted'); // Will not continue if next is not called
-  });
-}, () => {
-  console.log('Job Complete');
+const urls = ['www.someurl.com/path', 'www.someurl.com/path', 'www.someurl.com/path'];
+const data = new Array(urls.length);
+
+await doAllAsync(urls, async (url, index) => {
+  response = await fetch(url);
+  if(!response.ok) throw new Error('Request Failed');
+  const data[index] = response.text();
 });
+
+console.log(data)
 ```
 
-<a name="doAll"></a>
+<a name="doAllCallbacks"></a>
 
-## jazzy-utility.doAll
+## doAllCallbacks
 
-### _function_ doAll(_array_ array, _function_ forEachFunction, _function_ thenFunction) => _void_
+### _function_ doAllCallbacks(_array_ array, _function_ forEachFunction, _function_ thenFunction) => _void_
 
 Usage:
 
@@ -126,9 +128,22 @@ doAll(messages, (message, index, done) => {
 });
 ```
 
+<a name="drill"></a>
+
+## drill
+
+### _function_ drill(_array_ path, _object_ object) => _any_ result
+
+Usage:
+
+```
+const path = ['some', 'path', 'into', 'some', 'object'];
+const obj = { some: { path: { into: { some: { object: 'success' } } } } };
+console.log(drill(path, obj)); // output: success
+```
 <a name="deleteArrayElement"></a>
 
-## jazzy-utility.deleteArrayElement
+## deleteArrayElement
 
 ### _function_ deleteArrayElement(_array_ array, _any_ value) => _boolean_ result
 
@@ -142,7 +157,7 @@ console.log(myArr); // output: ['y', 'e', 'l', 'o']
 
 <a name="randomInt"></a>
 
-## jazzy-utility.randomInt
+## randomInt
 
 ### _function_ randomInt(_int_ min, _int_ max) => _int_ result
 
@@ -154,7 +169,7 @@ console.log(randomInt(0, 5)); // outputs an integer between 0 and 5 inclusive.
 
 <a name="randomArrayElement"></a>
 
-## jazzy-utility.randomArrayElement
+## randomArrayElement
 
 ### _function_ randomArrayElement(_array_ array) => _any_ result
 
@@ -167,7 +182,7 @@ console.log(randomArrayElement(myArr)); // outputs a random element from the inp
 
 <a name="randomArrayElements"></a>
 
-## jazzy-utility.randomArrayElements
+## randomArrayElements
 
 ### _function_ randomArrayElements(_number_ multiplier, _array_ array) => _array_ result
 
@@ -181,7 +196,7 @@ console.log(myArr.length) // Outputs 5 as original array is not affected.
 
 <a name="extractRandomArrayElements"></a>
 
-## jazzy-utility.extractRandomArrayElements
+## extractRandomArrayElements
 
 ### _function_ extractRandomArrayElements((_number_ multiplier, _array_ array) => _array_ result
 
@@ -195,7 +210,7 @@ console.log(myArr.length) // Outputs 3 as 2 elements have been extracted
 
 <a name="workflow"></a>
 
-## jazzy-utility.Workflow
+## Workflow
 
 ### _class_ Workflow()
 
