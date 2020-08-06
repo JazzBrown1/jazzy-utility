@@ -8,8 +8,14 @@ import randomEls from './randomEls';
 import Workflow from './workflow';
 import extractRandomEls from './extractRandomEls';
 import { store } from './store';
+import doAllAsync from './doAllAsync';
+import drill from './drill';
+import forEachAsync from './forEachAsync';
 
 export {
+  doAllAsync,
+  forEachAsync,
+  drill,
   forEachCallbacks,
   doAll,
   Stash,
@@ -31,13 +37,16 @@ export {
 
 export default {
   forEachCallbacks,
+  doAllAsync,
   doAll,
   Stash,
+  drill,
   randomArrayElement: randomEl,
   randomArrayElements: randomEls,
   randomInt,
   extractRandomArrayElements: extractRandomEls,
   deleteArrayElement: deleteArrayEl,
+  forEachAsync,
   // experimental
   store,
   Workflow,
@@ -46,5 +55,5 @@ export default {
   randomEls,
   extractRandomEls,
   arrayDelete: deleteArrayEl,
-  deleteArrayEl,
+  deleteArrayEl
 };
