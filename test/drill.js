@@ -14,7 +14,12 @@ describe('drill()', function () {
   });
   it('returns undefined if a child is undefined', function () {
     const obj = { test: { test2: { test3: 'test4' } } };
-    const arr = ['test', 'test2', 'error'];
+    const arr = ['test', 'test2', 'wrong'];
+    assert.equal(drill(arr, obj), undefined);
+  });
+  it('returns undefined if a child is undefined 2', function () {
+    const obj = { test: { test2: { test3: 'test4' } } };
+    const arr = ['test', 'wrong', 'test3'];
     assert.equal(drill(arr, obj), undefined);
   });
 });

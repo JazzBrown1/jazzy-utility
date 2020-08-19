@@ -416,7 +416,7 @@ var doAllAsync = function doAllAsync(arr, callback) {
 
 var drill = function drill(arr, obj) {
   return arr.reduce(function (acc, cur) {
-    if (!acc[cur]) return undefined;
+    if (!acc) return undefined;
     return acc[cur];
   }, obj);
 };
