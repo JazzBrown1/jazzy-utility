@@ -5,7 +5,7 @@
 [![Dependencies](https://img.shields.io/david/jazzbrown1/jazzy-utility)](https://npmjs.org/package/jazzy-utility)
 [![Version](https://img.shields.io/npm/v/jazzy-utility)](https://npmjs.org/package/jazzy-utility)
 
-A small utility library for use with... Well anything really.
+A small utility library for use with.... Well anything really.
 
 ### Table of contents
 
