@@ -80,7 +80,7 @@ console.log(myStash.isEmpty()); // output true
 
 ## doAllAsync
 
-### _function_ doAllCallbacks(_array_ array, _function_ forEachFunction, _function_ thenFunction) => _void_
+### _function_ doAllAsync(_array_ array, _function_ doAllFunction) => Promise
 
 Usage:
 
