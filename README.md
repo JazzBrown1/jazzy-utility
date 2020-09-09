@@ -51,7 +51,7 @@ import {Stash} from 'jazzy-utility';
 
 ## Stash
 
-A class that you can place data in and it returns an id as an integer. The data can then be retrieved with the integer. Particularly useful when interacting with external systems where a reference is required to relate a response to a query.
+A class that you can place data in and it returns an id. The data can then be retrieved with the integer. Particularly useful when interacting with external systems where a reference is required to relate a response to a query.
 
 ### _class_ Stash()
 
