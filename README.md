@@ -276,4 +276,4 @@ myWorkflow.run([], (arr) => {
 
 ## Issues
 
-If you encounter any issues please report them on the Library's [Github](https://github.com/JazzBrown1/jazzy-utility/issues).
+If you encounter any issues, please report them on the Library's [Github](https://github.com/JazzBrown1/jazzy-utility/issues).
