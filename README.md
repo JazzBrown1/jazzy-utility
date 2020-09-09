@@ -56,6 +56,7 @@ A class that allows you to place data in and it returns an id. The data can then
 ### _class_ Stash()
 
 Methods:
+
 <br/>put(_any_ value) => _text_ id
 <br/>see(_text_ id) => _any_ value
 <br/>take(_text_ id) => _any_ value
